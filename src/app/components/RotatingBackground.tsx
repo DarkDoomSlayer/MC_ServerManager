@@ -13,15 +13,21 @@ export default function RotatingBackground() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    // Fetch real high-res Minecraft wallpapers from online API
+    // Fetch local cached high-res Minecraft wallpapers
     fetch('/api/wallpapers/minecraft')
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
           setBackgrounds(data);
+          
+          // Preload all images in browser cache
+          data.forEach((url: string) => {
+            const img = new Image();
+            img.src = url;
+          });
         }
       })
-      .catch(err => console.error("Failed to load online wallpapers:", err));
+      .catch(err => console.error("Failed to load wallpapers:", err));
   }, []);
 
   useEffect(() => {
