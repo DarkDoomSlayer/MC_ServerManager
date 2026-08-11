@@ -9,6 +9,7 @@
 
 # local database & auth state
 /data/servers.db
+/data/*.sqlite
 /data/auth.json
 
 # temporary files
