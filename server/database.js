@@ -29,6 +29,16 @@ db.exec(`
   );
 `);
 
+// Auto-migrate missing columns for existing databases
+try {
+  const columns = db.pragma('table_info(servers)').map(c => c.name);
+  if (!columns.includes('engine')) db.exec('ALTER TABLE servers ADD COLUMN engine TEXT');
+  if (!columns.includes('modpackUrl')) db.exec('ALTER TABLE servers ADD COLUMN modpackUrl TEXT');
+  if (!columns.includes('mapPort')) db.exec('ALTER TABLE servers ADD COLUMN mapPort INTEGER DEFAULT 8123');
+} catch (e) {
+  console.error("Migration error:", e.message);
+}
+
 module.exports = {
   getServers: () => db.prepare('SELECT * FROM servers').all(),
   getServer: (id) => db.prepare('SELECT * FROM servers WHERE id = ?').get(id),
