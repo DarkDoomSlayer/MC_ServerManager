@@ -12,6 +12,7 @@ const backups = require('./server/backups');
 const configEditor = require('./server/configEditor');
 const tunnel = require('./server/tunnel');
 const autoScanner = require('./server/autoScanner');
+const wallpaperFetcher = require('./server/wallpaperFetcher');
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
@@ -86,6 +87,15 @@ app.prepare().then(() => {
     }
     auth.changePassword(newPassword);
     res.json({ success: true });
+  });
+
+  server.get('/api/wallpapers/minecraft', async (req, res) => {
+    try {
+      const wallpapers = await wallpaperFetcher.getMinecraftWallpapers();
+      res.json(wallpapers);
+    } catch (e) {
+      res.json(["/minecraft_bg.png", "/minecraft_bg_2.png", "/minecraft_bg_3.png"]);
+    }
   });
 
   server.post('/api/auth/logout', (req, res) => {
